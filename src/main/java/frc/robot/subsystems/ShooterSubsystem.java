@@ -53,13 +53,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     
     // Feed power into shooter wheels. Lower values reduce "pop-up" at entry and flatten flight path.
-    private static final double TOWER_POWER = 0.65;
+    private static final double TOWER_POWER = 1;
     private static final double CONVEYOR_POWER = 0.75;
 
     // PID constants for shooter velocity control - aggressive tuning for faster response
     private static final double SHOOTER_P = 0.02;
     private static final double SHOOTER_I = 0.0;
     private static final double SHOOTER_D = 0.001;
+
+      private static final double TOWER_P = 0.001;
+    private static final double TOWER_I = 0.0;
+    private static final double TOWER_D = 0.001;
+    
     private static final double SHOOTER_FF = 0.00019; // Feedforward for SparkMax built-in
     private static final double SHOOTER_OUTPUT_SCALE = 1.00; // Full output scaling for max speed
 
@@ -164,8 +169,12 @@ public class ShooterSubsystem extends SubsystemBase {
         towerConfig
             .idleMode(IdleMode.kCoast)
             .inverted(false)
-            .smartCurrentLimit(TOWER_CURRENT_LIMIT)
-            .openLoopRampRate(0.05);
+            .smartCurrentLimit(TOWER_CURRENT_LIMIT);
+            towerConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(TOWER_P, TOWER_I, TOWER_D)
+            .velocityFF(SHOOTER_FF)
+            .outputRange(-1, 1);
+            
 
         towerMotor.configure(
             towerConfig,
