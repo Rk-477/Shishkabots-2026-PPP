@@ -12,14 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAllign;
+import frc.robot.commands.AutonomousSequences;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakePivotSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import util.Logger;
 import edu.wpi.first.wpilibj.XboxController;
 
-import static edu.wpi.first.units.Units.RPM;
 import static frc.robot.Constants.OperatorConstants.DRIVER_CONTROLLER_PORT;
 import static frc.robot.Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT;
 
@@ -166,6 +167,8 @@ public class RobotContainer {
 
     // Connect Limelight to robot pose for simulation
     limelightSubsystem.setRobotPoseSupplier(() -> driveSubsystem.getPose());
+
+    configureAutoChooser();
   }
 
   /**
@@ -217,6 +220,19 @@ public class RobotContainer {
               intakePivotSubsystem.togglePosition();
             },
             intakePivotSubsystem));
+  }
+
+  private void configureAutoChooser() {
+    autoChooser.setDefaultOption(
+        "Middle: Back + Shoot",
+        AutonomousSequences.middle(driveSubsystem, shooterSubsystem));
+    autoChooser.addOption(
+        "Left: Back + Right Turn + Align (25/9)",
+        AutonomousSequences.left(limelightSubsystem, driveSubsystem));
+    autoChooser.addOption(
+        "Right: Back + Left Turn + Align (26/10)",
+        AutonomousSequences.right(limelightSubsystem, driveSubsystem));
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**

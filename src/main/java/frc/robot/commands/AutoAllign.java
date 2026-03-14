@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoAlignConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import java.util.Set;
 import util.Logger;
 
 public class AutoAllign extends Command {
@@ -19,6 +20,7 @@ public class AutoAllign extends Command {
 
   // Fallback target distance if no per-tag override exists.
   private final double defaultTargetDistance;
+  private final Set<Integer> allowedTagIds;
 
   // Tolerances
   private static final double DISTANCE_TOLERANCE = 0.1;  // +-10 cm
@@ -33,7 +35,26 @@ public class AutoAllign extends Command {
    * Creates a new AutoAlign command with per-tag target distance and default fallback.
    */
   public AutoAllign(LimelightSubsystem limelight, DriveSubsystem drive) {
-    this(limelight, drive, AutoAlignConstants.DEFAULT_TARGET_DISTANCE_METERS);
+    this(
+        limelight,
+        drive,
+        AutoAlignConstants.DEFAULT_TARGET_DISTANCE_METERS,
+        Set.of());
+  }
+
+  /**
+   * Creates a new AutoAlign command with an allowed set of AprilTag IDs.
+   * If allowedTagIds is empty, any visible tag is accepted.
+   */
+  public AutoAllign(
+      LimelightSubsystem limelight,
+      DriveSubsystem drive,
+      Set<Integer> allowedTagIds) {
+    this(
+        limelight,
+        drive,
+        AutoAlignConstants.DEFAULT_TARGET_DISTANCE_METERS,
+        allowedTagIds);
   }
 
   /**
@@ -43,10 +64,30 @@ public class AutoAllign extends Command {
    * @param drive The drive subsystem
    * @param defaultTargetDistanceMeters Fallback distance (meters) when no per-tag override exists
    */
-  public AutoAllign(LimelightSubsystem limelight, DriveSubsystem drive, double defaultTargetDistanceMeters) {
+  public AutoAllign(
+      LimelightSubsystem limelight,
+      DriveSubsystem drive,
+      double defaultTargetDistanceMeters) {
+    this(limelight, drive, defaultTargetDistanceMeters, Set.of());
+  }
+
+  /**
+   * Creates a new AutoAlign command.
+   *
+   * @param limelight The limelight subsystem
+   * @param drive The drive subsystem
+   * @param defaultTargetDistanceMeters Fallback distance (meters) when no per-tag override exists
+   * @param allowedTagIds Allowed AprilTag IDs; empty set means allow all IDs
+   */
+  public AutoAllign(
+      LimelightSubsystem limelight,
+      DriveSubsystem drive,
+      double defaultTargetDistanceMeters,
+      Set<Integer> allowedTagIds) {
     this.limelight = limelight;
     this.drive = drive;
     this.defaultTargetDistance = defaultTargetDistanceMeters;
+    this.allowedTagIds = Set.copyOf(allowedTagIds);
 
     distancePID.setTolerance(DISTANCE_TOLERANCE);
     strafePID.setTolerance(STRAFE_TOLERANCE);
@@ -72,6 +113,12 @@ public class AutoAllign extends Command {
     }
 
     int tagId = limelight.getTargetID();
+    if (!allowedTagIds.isEmpty() && !allowedTagIds.contains(tagId)) {
+      drive.stop();
+      Logger.log("AutoAlign: Ignoring tag " + tagId + " (allowed: " + allowedTagIds + ")");
+      return;
+    }
+
     double tx = limelight.getX();
     double ty = limelight.getY();
 
@@ -136,6 +183,11 @@ public class AutoAllign extends Command {
   @Override
   public boolean isFinished() {
     if (!limelight.hasValidTarget()) {
+      return false;
+    }
+
+    int tagId = limelight.getTargetID();
+    if (!allowedTagIds.isEmpty() && !allowedTagIds.contains(tagId)) {
       return false;
     }
 

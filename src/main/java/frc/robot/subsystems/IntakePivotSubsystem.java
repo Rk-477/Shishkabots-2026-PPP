@@ -16,8 +16,8 @@ public class IntakePivotSubsystem extends SubsystemBase {
     private static final int PIVOT_CAN_ID = 14;
 
     // Tune these using the absolute encoder value shown on Shuffleboard.
-    private static final double LOWER_POSITION = 0.991;
-    private static final double UPPER_POSITION = 0.705;
+    private static final double LOWER_POSITION = 0.0;
+    private static final double UPPER_POSITION = 0.355;
     private static final double POSITION_TOLERANCE = 0.01;
     private static final double PIVOT_POWER_UP = 0.30;
     private static final double PIVOT_POWER_DOWN = -0.20;
