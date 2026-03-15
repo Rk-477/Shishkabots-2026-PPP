@@ -25,10 +25,10 @@ public class Configs extends SubsystemBase {
             driveConfig
                 .inverted(inverted ? true: false)
                 .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(60)  // Increased from 40A to 60A for more power
+                .smartCurrentLimit(40)  // Increased from 40A to 60A for more power
                 .voltageCompensation(12.0)
-                .openLoopRampRate(0.1)   // Reduced ramp rate for faster response
-                .closedLoopRampRate(0.1);
+                .openLoopRampRate(0.5)   // Reduced ramp rate for faster response
+                .closedLoopRampRate(0.5);
             driveConfig.encoder
                 .positionConversionFactor(ModuleConstants.ROTATIONS_TO_METERS)
                 .velocityConversionFactor(ModuleConstants.RPM_TO_MPS); // rotations per minute to MPS

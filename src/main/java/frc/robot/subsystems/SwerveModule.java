@@ -63,7 +63,8 @@ public class SwerveModule {
         turningClosedLoopController = turningMotor.getClosedLoopController();
         
         // Configure encoders and motors
-        driveMotor.configure(inverted ? Configs.SwerveModule.drivingInvertedConfig : Configs.SwerveModule.drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        driveMotor.configure(inverted ? Configs.SwerveModule.drivingInvertedConfig : Configs.SwerveModule.drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters
+        );
         turningMotor.configure(Configs.SwerveModule.turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         chasisAngularOffset = angularOffset;
