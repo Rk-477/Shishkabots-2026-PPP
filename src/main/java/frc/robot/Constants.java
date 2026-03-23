@@ -35,19 +35,15 @@ public final class Constants {
   public static final class AutoAlignConstants {
     private AutoAlignConstants() {}
 
-    public static final double DEFAULT_TARGET_DISTANCE_METERS = 2.0;
-    public static final double DEFAULT_TAG_HEIGHT_METERS = 1.12;
+    public static final double DEFAULT_TARGET_DISTANCE_METERS = 2.5;
+    public static final double DEFAULT_TAG_HEIGHT_METERS = 1.13;
     public static final double CAMERA_HEIGHT_METERS = 0.434;
 
     // Per-tag target distance table for selected field tags.
     // Tune these values per scoring strategy.
     public static final Map<Integer, Double> TARGET_DISTANCE_METERS_BY_TAG = Map.ofEntries(
-        Map.entry(7, DEFAULT_TARGET_DISTANCE_METERS),
         Map.entry(10, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(12, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(23, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(26, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(28, DEFAULT_TARGET_DISTANCE_METERS)
+        Map.entry(26, DEFAULT_TARGET_DISTANCE_METERS)
     );
   }
 
